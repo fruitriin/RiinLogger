@@ -17,6 +17,15 @@ console.log("a")
 -> [ファイル名:行番号] 'a'
 ```
 
+## インストール
+
+```
+npm i https://github.com/fruitriin/RiinLogger
+```
+＊まだ npm にpublishしてません
+
+
+
 # methods
 
 ## log,info, warn, error
