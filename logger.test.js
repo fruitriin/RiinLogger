@@ -50,11 +50,10 @@ testCases["vue"].forEach(element => {
 
 
 
-
-
-console.config({format: "long"})
 testCases.標準型.forEach(element => {
     console.original.log(`---- 標準型 ---- ${element.s}`)
-    console.original.log(element.v)
-    console.log(element.v)
+// console.long には console.config({format: "long"}) が設定された RiinLoggerが入っている
+    console.long.log(element.v)
 });
+
+console.log("これはショートフォーマット")

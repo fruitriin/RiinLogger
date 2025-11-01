@@ -87,13 +87,6 @@ class RiinLogger {
       returnText = returnText.replace(key, replacer[key])
     }
     return returnText
-
-
-
-    // Log Levelが必要なら [${level}] で足せるけど多分必要ない
-    return `${timestamp}[${caller}]${
-      this.option.lineInfoWrap ? "\n" : ""
-    }${formattedArgs}`;
   }
 
   log(...args) {
@@ -120,12 +113,16 @@ class RiinLogger {
 // デフォルトインスタンスを作成
 const logger = new RiinLogger();
 
+// console.longプロパティ: format: "long"が設定されたインスタンス
+logger.long = new RiinLogger();
+logger.long.config({ format: "long" });
+
 // デフォルトインスタンスをエクスポート
 module.exports = logger;
 
 function getCallerInfo() {
   const err = new Error();
-  if(!err.stack) return "unknown"
+  if(!err.stack) return { functionName: "unknown", file: "unknown", line: 0 };
   const stack = err.stack.split("\n");
   // stack[0] = "Error"
   // stack[1] = at _getCallerInfo
@@ -154,7 +151,11 @@ function getCallerInfo() {
     const original = findOriginalPosition(fullPath, line, column);
     if (original && original.source) {
       const originalFile = original.source.split("/").pop();
-      return `${functionName}@${originalFile}:${original.line}`;
+      return {
+        functionName,
+        file: originalFile,
+        line: original.line
+      };
     }
 
     return {
@@ -162,8 +163,6 @@ function getCallerInfo() {
       file,
       line
     }
-
-    return `${functionName}()@${file}:${line}`;
   }
   return {
     functionName: "unknown",
