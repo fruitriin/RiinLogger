@@ -1,7 +1,7 @@
 const fs = require("fs");
 const util = require("util")
 const { TraceMap, originalPositionFor } = require("@jridgewell/trace-mapping");
-const { isReactive, toRaw } = require("@vue/reactivity");
+const { isReactive, isRef, toRaw } = require("@vue/reactivity");
 
 
 class RiinLogger {
@@ -135,9 +135,23 @@ function toRawRecursive(value, visited = new WeakSet()) {
     return "[Circular]";
   }
 
-  // リアクティブオブジェクトの場合は生の値に変換
-  const raw = isReactive(value) ? toRaw(value) : value;
-  visited.add(raw);
+  // Refの場合は.valueで値を取得、Reactiveの場合はtoRawで生の値に変換
+  let raw = value;
+  if (isRef(value)) {
+    raw = value.value;
+  } else if (isReactive(value)) {
+    raw = toRaw(value);
+  }
+
+  // オブジェクトの場合のみvisitedに追加（プリミティブ値は追加できない）
+  if (raw !== null && typeof raw === "object") {
+    visited.add(raw);
+  }
+
+  // Refから取得した値がプリミティブの場合はここで返す
+  if (raw === null || typeof raw !== "object") {
+    return raw;
+  }
 
   // 配列の場合
   if (Array.isArray(raw)) {
