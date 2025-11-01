@@ -1,4 +1,7 @@
 const console = require("./index.js")
+const mapLikeObject = require("./mapLikeObject.js")
+
+
 
 const testCases = {
     "標準型": [
@@ -9,7 +12,8 @@ const testCases = {
         {s: "Undefiend", v: undefined},
         {s: "null", v: null},
         {s: "オブジェクト", v:{name: "I'm object"}},
-        // {s: "配列", v: [1, 2, 3, 4]},
+        {s: "配列", v: [1, 2, 3, 4]},
+        {s: "Proxy", v: mapLikeObject({hoo: 123, bar: 456})}
         // {s: "Symbol", v: Symbol("シンボル")},
         // {s: "Bigint", v: 100n},
     ],

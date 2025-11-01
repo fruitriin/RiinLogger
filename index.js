@@ -14,7 +14,8 @@ class RiinLogger {
       colors: true,
       depth: 2,
       showHidden: false,
-      compact: false,
+      // compact: false だと オブジェクトや配列が常に改行される
+      compact: true,
       breakLength: 80,
       maxArrayLength: 100
     }
@@ -32,7 +33,7 @@ class RiinLogger {
   _getCallerInfo = getCallerInfo;
   _toRawRecursive = toRawRecursive;
 
-  _format(args) {
+  _format(...args) {
     const timestamp = this.option.enableTimestamp
       ? `[${new Date().toLocaleTimeString("ja-JP", {
           timeZone: "Asia/Tokyo",
@@ -42,10 +43,18 @@ class RiinLogger {
         })}]`
       : "";
     const caller = this._getCallerInfo();
+
+    // 各引数を個別にフォーマットしてスペース区切りで結合
+    const formattedArgs = args.map(arg =>
+      this.option.unwrapReactivity
+        ? util.inspect(toRawRecursive(arg), this.option.inspect)
+        : util.inspect(arg, this.option.inspect)
+    ).join(' ');
+
     // Log Levelが必要なら [${level}] で足せるけど多分必要ない
     return `${timestamp}[${caller}]${
       this.option.lineInfoWrap ? "\n" : ""
-    }${this.option.unwrapReactivity ? toRawRecursive(args) : util.inspect(args, this.originalOption.inspect)}`;
+    }${formattedArgs}`;
   }
 
   log(...args) {

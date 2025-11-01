@@ -13,8 +13,8 @@ function mapLikeObject(init) {
   } else {
     base = new Map();
   }
-  
-  return new Proxy(map, {
+
+  return new Proxy(base, {
     get(target, prop) {
       // Mapに存在するキーならその値を返す
       if (target.has(prop)) return target.get(prop);
@@ -42,3 +42,7 @@ function mapLikeObject(init) {
     }
   });
 }
+
+
+
+module.exports = mapLikeObject;
