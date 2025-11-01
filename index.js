@@ -7,10 +7,8 @@ const { isReactive, isRef, toRaw } = require("@vue/reactivity");
 class RiinLogger {
   originalOption = {
     format: "short",
-    enableTimestamp: true,
-    lineInfoWrap: true,
-    somethingElse: false,
     unwrapReactivity: false,
+    // utils.inspect の引数
     inspect: {
       colors: true,
       depth: 2,
@@ -35,14 +33,12 @@ class RiinLogger {
   _toRawRecursive = toRawRecursive;
 
   _format(...args) {
-    const timestamp = this.option.enableTimestamp
-      ? `[${new Date().toLocaleTimeString("ja-JP", {
+    const timestamp = `${new Date().toLocaleTimeString("ja-JP", {
           timeZone: "Asia/Tokyo",
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
-        })}]`
-      : "";
+        })}`;
     const caller = this._getCallerInfo();
 
     // 各引数を個別にフォーマットしてスペース区切りで結合
@@ -61,17 +57,13 @@ class RiinLogger {
 
     
     
-    const shortFormat = "[%f:%l]%a"
-    const longFormat = "[%t][%c()@%f:%l]%a\n"
-
-    let targetFormat = ""
-    if(this.option.format === "short"){
-      targetFormat = shortFormat
-    }else if(this.option.format === "long") {
-      targetFormat = longFormat
-    } else {
-      targetFormat = this.option.format
-    }
+    const formatTemplates = {
+      short: "[%f:%l]%a",
+      long: "[%t][%c()@%f:%l]%a\n"
+    };
+    const targetFormat =
+    formatTemplates[this.option.format] ||
+    this.option.format;
 
     const replacer = {
       "%t": timestamp,
@@ -116,6 +108,20 @@ const logger = new RiinLogger();
 // console.longプロパティ: format: "long"が設定されたインスタンス
 logger.long = new RiinLogger();
 logger.long.config({ format: "long" });
+
+// console.longプロパティ: format: "short"が設定されたインスタンス
+logger.short = new RiinLogger();
+logger.short.config({ format: "short" });
+
+
+logger.unwrap = new RiinLogger();
+logger.unwrap.config({unwrapReactivity: true, format: "short"})
+
+
+logger.unwrapLong = new RiinLogger();
+logger.unwrapLong.config({unwrapReactivity: true, format: "long"})
+
+
 
 // デフォルトインスタンスをエクスポート
 module.exports = logger;

@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node logger.test.js",
-    "test:ui": "vitest --ui",
-    "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test2": "node loggerNamed.test.js"
   },
   "author": "",
   "license": "MIT",
