@@ -1,13 +1,19 @@
+import { InspectOptions } from 'util';
+
 export interface RiinLoggerOptions {
+  format?: 'short' | 'long' | string;
   enableTimestamp?: boolean;
   lineInfoWrap?: boolean;
   somethingElse?: boolean;
   unwrapReactivity?: boolean;
+  inspect?: InspectOptions;
 }
 
 export class RiinLogger {
   originalOption: RiinLoggerOptions;
   option: RiinLoggerOptions;
+  original: typeof console;
+  long?: RiinLogger;
 
   constructor();
   config(option?: RiinLoggerOptions): void;
@@ -19,6 +25,9 @@ export class RiinLogger {
   debug(...args: any[]): void;
 }
 
-declare const logger: RiinLogger;
+declare const logger: RiinLogger & {
+  long: RiinLogger;
+};
+
 export default logger;
 export { RiinLogger };
