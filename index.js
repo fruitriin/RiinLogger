@@ -6,6 +6,7 @@ const { isReactive, isRef, toRaw } = require("@vue/reactivity");
 
 class RiinLogger {
   originalOption = {
+    format: "short",
     enableTimestamp: true,
     lineInfoWrap: true,
     somethingElse: false,
@@ -50,6 +51,44 @@ class RiinLogger {
         ? util.inspect(toRawRecursive(arg), this.option.inspect)
         : util.inspect(arg, this.option.inspect)
     ).join(' ');
+
+    // %t -> timestamp
+    // %c -> caller.functionName
+    // %f -> caller.file
+    // %l -> caller.line
+    // %a -> args
+
+
+    
+    
+    const shortFormat = "[%f:%l]%a"
+    const longFormat = "[%t][%c()@%f:%l]%a\n"
+
+    let targetFormat = ""
+    if(this.option.format === "short"){
+      targetFormat = shortFormat
+    }else if(this.option.format === "long") {
+      targetFormat = longFormat
+    } else {
+      targetFormat = this.option.format
+    }
+
+    const replacer = {
+      "%t": timestamp,
+      "%c": caller.functionName,
+      "%f": caller.file,
+      "%l": caller.line,
+      "%a": formattedArgs
+    }
+    
+
+    let returnText = targetFormat
+    for(const key in replacer){
+      returnText = returnText.replace(key, replacer[key])
+    }
+    return returnText
+
+
 
     // Log Levelが必要なら [${level}] で足せるけど多分必要ない
     return `${timestamp}[${caller}]${
@@ -118,9 +157,19 @@ function getCallerInfo() {
       return `${functionName}@${originalFile}:${original.line}`;
     }
 
+    return {
+      functionName,
+      file,
+      line
+    }
+
     return `${functionName}()@${file}:${line}`;
   }
-  return "unknown";
+  return {
+    functionName: "unknown",
+    file: "unknown",
+    line: 0
+  }
 }
 
 // Vuejsのreactivity を はずす
