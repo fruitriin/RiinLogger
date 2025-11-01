@@ -1,6 +1,8 @@
 const fs = require("fs");
+const util = require("util")
 const { TraceMap, originalPositionFor } = require("@jridgewell/trace-mapping");
 const { isReactive, toRaw } = require("@vue/reactivity");
+
 
 class RiinLogger {
   originalOption = {
@@ -8,7 +10,16 @@ class RiinLogger {
     lineInfoWrap: true,
     somethingElse: false,
     unwrapReactivity: false,
+    inspect: {
+      colors: true,
+      depth: 2,
+      showHidden: false,
+      compact: false,
+      breakLength: 80,
+      maxArrayLength: 100
+    }
   };
+  original = console
   option = structuredClone(this.originalOption);
   // Note: この辺の設計は改善の余地あり
 
@@ -34,7 +45,7 @@ class RiinLogger {
     // Log Levelが必要なら [${level}] で足せるけど多分必要ない
     return `${timestamp}[${caller}]${
       this.option.lineInfoWrap ? "\n" : ""
-    }${this.option.unwrapReactivity ? toRawRecursive(args) : args}`;
+    }${this.option.unwrapReactivity ? toRawRecursive(args) : util.inspect(args, this.originalOption.inspect)}`;
   }
 
   log(...args) {

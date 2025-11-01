@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node logger.test.js",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "author": "",
   "license": "MIT",
@@ -13,6 +16,7 @@
     "@vue/reactivity": "^3.5.22"
   },
   "devDependencies": {
-    "@types/node": "^24.6.0"
+    "@types/node": "^24.6.0",
+    "vitest": "^4.0.6"
   }
 }
