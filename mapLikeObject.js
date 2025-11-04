@@ -1,3 +1,5 @@
+// Objectの代わりに使えるくらいショートハンドなMap
+
 function mapLikeObject(init) {
       // 1) 下敷きの Map を用意（init の型に応じて初期化）
   let base;
@@ -42,6 +44,10 @@ function mapLikeObject(init) {
     }
   });
 }
+
+ const test= new mapLikeObject({a: 1234, b: "235"})
+ test["a"].get()
+console.log(test)
 
 
 
